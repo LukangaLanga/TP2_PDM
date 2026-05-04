@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'tela_inicial.dart';
 import 'estudantes/estudantes_tela.dart';
 import 'disciplinas/disciplinas_tela.dart';
+import 'inscricoes/inscricoes_tela.dart';
 import 'avaliacoes/avaliacoes_tela.dart';
 import 'notas/notas_tela.dart';
 
@@ -48,6 +49,11 @@ class DrawerPrincipal extends StatelessWidget {
             icone: Icons.book,
             titulo: 'Disciplinas',
             destino: const DisciplinasTela(),
+          ),
+          _ItemDrawer(
+            icone: Icons.how_to_reg,
+            titulo: 'Inscrições',
+            destino: const InscricoesTela(),
           ),
           _ItemDrawer(
             icone: Icons.assignment,
