@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tpc2_rushil_app/telas/inscricoes/inscricoes_tela.dart';
 import 'tela_inicial.dart';
 import 'estudantes/estudantes_tela.dart';
 import 'disciplinas/disciplinas_tela.dart';
@@ -45,6 +46,11 @@ class DrawerPrincipal extends StatelessWidget {
             icone: Icons.people,
             titulo: 'Estudantes',
             destino: const EstudantesTela(),
+          ),
+          _ItemDrawer(
+            icone: Icons.people,
+            titulo: 'Incrições',
+            destino: const InscricoesTela(),
           ),
           _ItemDrawer(
             icone: Icons.book,

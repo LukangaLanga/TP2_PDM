@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../base_dados/locator.dart';
 import '../../modelos/avaliacao.dart';
 
 class FormularioAvaliacao extends StatefulWidget {
@@ -42,8 +43,11 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
     );
   }
 
-  void _guardar() {
+
+
+  void _guardar() async  {
     String nome = _nomeController.text.trim();
+
     if (nome.isEmpty) {
       _mostrarErro('O nome não pode estar vazio');
       return;
@@ -51,9 +55,20 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
 
     double? peso = double.tryParse(_pesoController.text.trim());
     if (peso == null || peso <= 0) {
-      _mostrarErro('O peso deve ser maior que 0');
+      _mostrarErro('A pontuação deve ser maior que 0');
       return;
     }
+
+
+    final avaliacoes = await Locator.avaliacao.listarPorDisciplina(widget.disciplinaId);
+
+    for (int i = 0; i < avaliacoes.length; i++) {
+      if (avaliacoes[i].nome.toLowerCase() == nome.toLowerCase()) {
+        _mostrarErro('Já existe uma avaliação com este nome nesta disciplina');
+        return;
+      }
+    }
+
 
     print("a guardar avaliacao...");
     widget.onGuardar(Avaliacao(widget.disciplinaId, nome, peso));
@@ -92,7 +107,7 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
           TextField(
             controller: _pesoController,
             decoration: const InputDecoration(
-              labelText: 'Peso (%)',
+              labelText: 'Pontos',
               border: OutlineInputBorder(),
             ),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),

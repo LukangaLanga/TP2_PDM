@@ -4,6 +4,13 @@ class AvaliacaoOperacoes {
   static List<Avaliacao> _avaliacoes = [];
 
   static void adicionar(Avaliacao a) {
+
+    for (int i = 0; i < _avaliacoes.length; i++) {
+      if(_avaliacoes[i].nome.toLowerCase() == a.nome.toLowerCase()){
+        print('A avaliacao ja existe');
+        return;
+      }
+    }
     _avaliacoes.add(a);
   }
 

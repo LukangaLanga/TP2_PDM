@@ -26,7 +26,7 @@ class ListaAvaliacoes extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.assignment, color: Colors.blue[900]),
             title: Text(a.nome),
-            subtitle: Text('Peso: ${a.peso.toStringAsFixed(1)}%'),
+            subtitle: Text('Pontos: ${a.peso.toStringAsFixed(1)}'),
             trailing: IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () => onRemover(a.id!),

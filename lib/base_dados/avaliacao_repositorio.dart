@@ -6,7 +6,20 @@ class AvaliacaoRepositorio {
 
   Future<void> adicionar(Avaliacao a) async {
     print("a adicionar avaliacao: ${a.nome}");
+
     Database db = await BaseDadosHelper.getInstance();
+
+    List<Map<String, dynamic>> existe = await db.query(
+      'avaliacoes',
+      where: 'LOWER(nome) = ? AND disciplinaId = ?',
+      whereArgs: [a.nome.toLowerCase(), a.disciplinaId],
+    );
+
+    if (existe.isNotEmpty) {
+      print("A avaliação já existe nesta disciplina");
+      return;
+    }
+
     await db.insert('avaliacoes', a.toMap());
   }
 
