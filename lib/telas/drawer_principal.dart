@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'tela_inicial.dart';
 import 'estudantes/estudantes_tela.dart';
 import 'disciplinas/disciplinas_tela.dart';
-import 'inscricoes/inscricoes_tela.dart';
 import 'avaliacoes/avaliacoes_tela.dart';
 import 'notas/notas_tela.dart';
 
@@ -14,6 +13,7 @@ class DrawerPrincipal extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
+          // cabeçalho azul escuro com nome da app
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue[900]),
             child: const SizedBox(
@@ -35,36 +35,11 @@ class DrawerPrincipal extends StatelessWidget {
               ),
             ),
           ),
-          _ItemDrawer(
-            icone: Icons.home,
-            titulo: 'Início',
-            destino: const TelaInicial(),
-          ),
-          _ItemDrawer(
-            icone: Icons.people,
-            titulo: 'Estudantes',
-            destino: const EstudantesTela(),
-          ),
-          _ItemDrawer(
-            icone: Icons.book,
-            titulo: 'Disciplinas',
-            destino: const DisciplinasTela(),
-          ),
-          _ItemDrawer(
-            icone: Icons.how_to_reg,
-            titulo: 'Inscrições',
-            destino: const InscricoesTela(),
-          ),
-          _ItemDrawer(
-            icone: Icons.assignment,
-            titulo: 'Avaliações',
-            destino: const AvaliacoesTela(),
-          ),
-          _ItemDrawer(
-            icone: Icons.grade,
-            titulo: 'Notas',
-            destino: const NotasTela(),
-          ),
+          _ItemDrawer(icone: Icons.home,       titulo: 'Início',      destino: const TelaInicial()),
+          _ItemDrawer(icone: Icons.people,     titulo: 'Estudantes',  destino: const EstudantesTela()),
+          _ItemDrawer(icone: Icons.book,       titulo: 'Disciplinas', destino: const DisciplinasTela()),
+          _ItemDrawer(icone: Icons.assignment, titulo: 'Avaliações',  destino: const AvaliacoesTela()),
+          _ItemDrawer(icone: Icons.grade,      titulo: 'Notas',       destino: const NotasTela()),
         ],
       ),
     );

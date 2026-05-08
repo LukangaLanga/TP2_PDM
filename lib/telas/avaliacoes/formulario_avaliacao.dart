@@ -26,14 +26,38 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
     super.dispose();
   }
 
-  void _guardar() {
-    double peso = double.tryParse(_pesoController.text) ?? 0.0;
-    Avaliacao a = Avaliacao(
-      widget.disciplinaId,
-      _nomeController.text,
-      peso,
+  // mostra uma mensagem de erro com AlertDialog simples
+  void _mostrarErro(String mensagem) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Erro'),
+        content: Text(mensagem),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
-    widget.onGuardar(a);
+  }
+
+  // valida e guarda a avaliação
+  void _guardar() {
+    String nome = _nomeController.text.trim();
+    if (nome.isEmpty) {
+      _mostrarErro('O nome não pode estar vazio');
+      return;
+    }
+
+    double? peso = double.tryParse(_pesoController.text.trim());
+    if (peso == null || peso <= 0) {
+      _mostrarErro('O peso deve ser maior que 0');
+      return;
+    }
+
+    widget.onGuardar(Avaliacao(widget.disciplinaId, nome, peso));
   }
 
   @override

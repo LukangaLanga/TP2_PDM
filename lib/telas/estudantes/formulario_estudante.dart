@@ -20,9 +20,15 @@ class _FormularioEstudanteState extends State<FormularioEstudante> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _cursoController = TextEditingController();
 
+  // mensagens de erro por campo
+  String? _erroNome;
+  String? _erroEmail;
+  String? _erroCurso;
+
   @override
   void initState() {
     super.initState();
+    // preenche os campos se estiver a editar
     if (widget.estudante != null) {
       _nomeController.text  = widget.estudante!.nome;
       _emailController.text = widget.estudante!.email;
@@ -38,19 +44,27 @@ class _FormularioEstudanteState extends State<FormularioEstudante> {
     super.dispose();
   }
 
+  // valida os campos e guarda o estudante
   void _guardar() {
+    String nome  = _nomeController.text.trim();
+    String email = _emailController.text.trim();
+    String curso = _cursoController.text.trim();
+
+    setState(() {
+      _erroNome  = nome.isEmpty  ? 'O nome não pode estar vazio'  : null;
+      _erroEmail = email.isEmpty ? 'O email não pode estar vazio' : null;
+      _erroCurso = curso.isEmpty ? 'O curso não pode estar vazio' : null;
+    });
+
+    if (nome.isEmpty || email.isEmpty || curso.isEmpty) return;
+
     if (widget.estudante != null) {
-      widget.estudante!.nome  = _nomeController.text;
-      widget.estudante!.email = _emailController.text;
-      widget.estudante!.curso = _cursoController.text;
+      widget.estudante!.nome  = nome;
+      widget.estudante!.email = email;
+      widget.estudante!.curso = curso;
       widget.onGuardar(widget.estudante!);
     } else {
-      Estudante e = Estudante(
-        _nomeController.text,
-        _emailController.text,
-        _cursoController.text,
-      );
-      widget.onGuardar(e);
+      widget.onGuardar(Estudante(nome, email, curso));
     }
   }
 
@@ -78,26 +92,29 @@ class _FormularioEstudanteState extends State<FormularioEstudante> {
           const SizedBox(height: 16),
           TextField(
             controller: _nomeController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Nome',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _erroNome,
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Email',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _erroEmail,
             ),
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _cursoController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Curso',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _erroCurso,
             ),
           ),
           const SizedBox(height: 20),

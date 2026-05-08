@@ -34,6 +34,9 @@ class _FormularioNotaState extends State<FormularioNota> {
     super.initState();
     if (widget.nota != null) {
       _valorController.text = widget.nota!.valor.toStringAsFixed(1);
+      // pré-seleciona a avaliação para saber o peso máximo
+      final matches = widget.avaliacoes.where((a) => a.id == widget.nota!.avaliacaoId);
+      if (matches.isNotEmpty) _avaliacaoSelecionada = matches.first;
     }
   }
 
@@ -43,26 +46,76 @@ class _FormularioNotaState extends State<FormularioNota> {
     super.dispose();
   }
 
+  // devolve o nome do estudante a partir da inscrição
   String _nomeEstudante(Inscricao i) {
     final matches = widget.estudantes.where((e) => e.id == i.estudanteId);
     return matches.isEmpty ? 'Desconhecido' : matches.first.nome;
   }
 
-  void _guardar() {
-    double valor = double.tryParse(_valorController.text) ?? 0.0;
+  // mostra uma mensagem de erro com AlertDialog simples
+  void _mostrarErro(String mensagem) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Erro'),
+        content: Text(mensagem),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    if (widget.nota != null) {
+  // valida e guarda a nota
+  void _guardar() {
+    bool editando = widget.nota != null;
+
+    // valida os dropdowns quando estiver a criar uma nova nota
+    if (!editando) {
+      if (_inscricaoSelecionada == null) {
+        _mostrarErro('Selecione um estudante');
+        return;
+      }
+      if (_avaliacaoSelecionada == null) {
+        _mostrarErro('Selecione uma avaliação');
+        return;
+      }
+    }
+
+    // validação do valor da nota
+    String texto = _valorController.text.trim();
+    if (texto.isEmpty) {
+      _mostrarErro('O campo não pode estar vazio');
+      return;
+    }
+    double? valor = double.tryParse(texto);
+    if (valor == null) {
+      _mostrarErro('Valor inválido');
+      return;
+    }
+    if (valor < 0) {
+      _mostrarErro('A nota não pode ser negativa');
+      return;
+    }
+    final peso = _avaliacaoSelecionada?.peso;
+    if (peso != null && valor > peso) {
+      _mostrarErro('A nota não pode ser superior ao peso (${peso.toStringAsFixed(1)})');
+      return;
+    }
+
+    if (editando) {
       widget.nota!.valor = valor;
       widget.onGuardar(widget.nota!);
     } else {
-      if (_inscricaoSelecionada == null || _avaliacaoSelecionada == null) return;
-      Nota n = Nota(
+      widget.onGuardar(Nota(
         _inscricaoSelecionada!.id!,
         _avaliacaoSelecionada!.id!,
         valor,
         '',
-      );
-      widget.onGuardar(n);
+      ));
     }
   }
 
@@ -90,6 +143,7 @@ class _FormularioNotaState extends State<FormularioNota> {
             ),
           ),
           const SizedBox(height: 16),
+          // dropdowns só aparecem quando criar uma nova nota
           if (!editando) ...[
             DropdownButtonFormField<Inscricao>(
               value: _inscricaoSelecionada,
@@ -113,12 +167,24 @@ class _FormularioNotaState extends State<FormularioNota> {
                 border: OutlineInputBorder(),
               ),
               items: widget.avaliacoes.map((a) {
-                return DropdownMenuItem(value: a, child: Text(a.nome));
+                return DropdownMenuItem(
+                  value: a,
+                  child: Text('${a.nome} (peso: ${a.peso.toStringAsFixed(1)})'),
+                );
               }).toList(),
               onChanged: (a) => setState(() => _avaliacaoSelecionada = a),
             ),
             const SizedBox(height: 12),
           ],
+          // mostra o peso máximo quando a avaliação está seleccionada
+          if (_avaliacaoSelecionada != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Peso máximo: ${_avaliacaoSelecionada!.peso.toStringAsFixed(1)}',
+                style: TextStyle(color: Colors.grey[700], fontSize: 13),
+              ),
+            ),
           TextField(
             controller: _valorController,
             decoration: const InputDecoration(

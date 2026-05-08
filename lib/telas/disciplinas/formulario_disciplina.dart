@@ -20,9 +20,15 @@ class _FormularioDisciplinaState extends State<FormularioDisciplina> {
   final TextEditingController _cargaHorariaController = TextEditingController();
   final TextEditingController _descricaoController    = TextEditingController();
 
+  // mensagens de erro por campo
+  String? _erroNome;
+  String? _erroCargaHoraria;
+  String? _erroDescricao;
+
   @override
   void initState() {
     super.initState();
+    // preenche os campos se estiver a editar
     if (widget.disciplina != null) {
       _nomeController.text         = widget.disciplina!.nome;
       _cargaHorariaController.text = widget.disciplina!.cargaHoraria.toString();
@@ -38,21 +44,29 @@ class _FormularioDisciplinaState extends State<FormularioDisciplina> {
     super.dispose();
   }
 
+  // valida os campos e guarda a disciplina
   void _guardar() {
-    int cargaHoraria = int.tryParse(_cargaHorariaController.text) ?? 0;
+    String nome      = _nomeController.text.trim();
+    String cargaStr  = _cargaHorariaController.text.trim();
+    String descricao = _descricaoController.text.trim();
+    int?   carga     = int.tryParse(cargaStr);
+
+    setState(() {
+      _erroNome        = nome.isEmpty      ? 'O nome não pode estar vazio'            : null;
+      _erroCargaHoraria = cargaStr.isEmpty ? 'A carga horária não pode estar vazia'  :
+                          (carga == null || carga <= 0) ? 'Insira um número válido maior que 0' : null;
+      _erroDescricao   = descricao.isEmpty ? 'A descrição não pode estar vazia'       : null;
+    });
+
+    if (nome.isEmpty || descricao.isEmpty || carga == null || carga <= 0) return;
 
     if (widget.disciplina != null) {
-      widget.disciplina!.nome         = _nomeController.text;
-      widget.disciplina!.cargaHoraria = cargaHoraria;
-      widget.disciplina!.descricao    = _descricaoController.text;
+      widget.disciplina!.nome         = nome;
+      widget.disciplina!.cargaHoraria = carga;
+      widget.disciplina!.descricao    = descricao;
       widget.onGuardar(widget.disciplina!);
     } else {
-      Disciplina d = Disciplina(
-        _nomeController.text,
-        cargaHoraria,
-        _descricaoController.text,
-      );
-      widget.onGuardar(d);
+      widget.onGuardar(Disciplina(nome, carga, descricao));
     }
   }
 
@@ -80,26 +94,29 @@ class _FormularioDisciplinaState extends State<FormularioDisciplina> {
           const SizedBox(height: 16),
           TextField(
             controller: _nomeController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Nome',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _erroNome,
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _cargaHorariaController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Carga Horária (horas)',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _erroCargaHoraria,
             ),
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _descricaoController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Descrição',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              errorText: _erroDescricao,
             ),
             maxLines: 2,
           ),

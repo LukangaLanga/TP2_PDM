@@ -23,6 +23,8 @@ class _NotasTelaState extends State<NotasTela> {
   List<Avaliacao>  _avaliacoes            = [];
   List<Estudante>  _estudantes            = [];
   Disciplina?      _disciplinaSelecionada;
+  // média da disciplina seleccionada — null se não houver notas
+  double?          _media;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class _NotasTelaState extends State<NotasTela> {
     await _carregarPorDisciplina();
   }
 
+  // carrega notas, inscrições e avaliações da disciplina seleccionada
   Future<void> _carregarPorDisciplina() async {
     if (_disciplinaSelecionada == null) return;
     int disciplinaId = _disciplinaSelecionada!.id!;
@@ -49,10 +52,18 @@ class _NotasTelaState extends State<NotasTela> {
     List<Inscricao> inscricoes = await Locator.inscricao.listarPorDisciplina(disciplinaId);
     List<Avaliacao> avaliacoes = await Locator.avaliacao.listarPorDisciplina(disciplinaId);
 
+    // calcula a média — null se não houver notas
+    double? media;
+    if (notas.isNotEmpty) {
+      double soma = notas.fold(0.0, (sum, n) => sum + n.valor);
+      media = soma / notas.length;
+    }
+
     setState(() {
       _notas      = notas;
       _inscricoes = inscricoes;
       _avaliacoes = avaliacoes;
+      _media      = media;
     });
   }
 
@@ -98,6 +109,7 @@ class _NotasTelaState extends State<NotasTela> {
       drawer: const DrawerPrincipal(),
       body: Column(
         children: [
+          // seletor de disciplina
           Padding(
             padding: const EdgeInsets.all(16),
             child: DropdownButtonFormField<Disciplina>(
@@ -115,13 +127,29 @@ class _NotasTelaState extends State<NotasTela> {
               },
             ),
           ),
+          // média geral no topo — verde se >= 10, vermelho se < 10
+          if (_media != null)
+            Container(
+              color: _media! >= 10 ? Colors.green : Colors.red,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Text(
+                'Média geral: ${_media!.toStringAsFixed(1)}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          // lista de notas com contexto de estudante e avaliação
           Expanded(
             child: ListaNotas(
-              notas:       _notas,
-              inscricoes:  _inscricoes,
-              avaliacoes:  _avaliacoes,
-              estudantes:  _estudantes,
-              onEditar:    (n) => _abrirFormulario(nota: n),
+              notas:      _notas,
+              inscricoes: _inscricoes,
+              avaliacoes: _avaliacoes,
+              estudantes: _estudantes,
+              onEditar:   (n) => _abrirFormulario(nota: n),
             ),
           ),
         ],
