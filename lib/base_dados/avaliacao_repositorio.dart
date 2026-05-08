@@ -5,11 +5,13 @@ import 'base_dados_helper.dart';
 class AvaliacaoRepositorio {
 
   Future<void> adicionar(Avaliacao a) async {
+    print("a adicionar avaliacao: ${a.nome}");
     Database db = await BaseDadosHelper.getInstance();
     await db.insert('avaliacoes', a.toMap());
   }
 
   Future<void> remover(int id) async {
+    print("a remover avaliacao id: $id");
     Database db = await BaseDadosHelper.getInstance();
     await db.delete(
       'avaliacoes',
@@ -19,6 +21,7 @@ class AvaliacaoRepositorio {
   }
 
   Future<List<Avaliacao>> listarPorDisciplina(int disciplinaId) async {
+    print("a carregar avaliacoes da disciplina $disciplinaId");
     Database db = await BaseDadosHelper.getInstance();
     List<Map<String, dynamic>> resultado = await db.query(
       'avaliacoes',

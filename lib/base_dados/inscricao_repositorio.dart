@@ -6,8 +6,13 @@ class InscricaoRepositorio {
 
   Future<void> inscrever(int estudanteId, int disciplinaId) async {
     bool jaInscrito = await estudanteJaInscrito(estudanteId, disciplinaId);
-    if (jaInscrito) return;
+    // se já está inscrito, não faz nada
+    if (jaInscrito) {
+      print("estudante $estudanteId já inscrito");
+      return;
+    }
 
+    print("a inscrever estudante $estudanteId na disciplina $disciplinaId");
     Database db = await BaseDadosHelper.getInstance();
     Inscricao i = Inscricao(
       estudanteId,
@@ -18,6 +23,7 @@ class InscricaoRepositorio {
   }
 
   Future<void> remover(int id) async {
+    print("a remover inscricao id: $id");
     Database db = await BaseDadosHelper.getInstance();
     await db.delete(
       'inscricoes',
@@ -42,6 +48,7 @@ class InscricaoRepositorio {
   }
 
   Future<List<Inscricao>> listarPorDisciplina(int disciplinaId) async {
+    print("a carregar inscricoes da disciplina $disciplinaId");
     Database db = await BaseDadosHelper.getInstance();
     List<Map<String, dynamic>> resultado = await db.query(
       'inscricoes',

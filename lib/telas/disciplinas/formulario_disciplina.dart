@@ -16,11 +16,10 @@ class FormularioDisciplina extends StatefulWidget {
 }
 
 class _FormularioDisciplinaState extends State<FormularioDisciplina> {
-  final TextEditingController _nomeController         = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cargaHorariaController = TextEditingController();
-  final TextEditingController _descricaoController    = TextEditingController();
+  final TextEditingController _descricaoController = TextEditingController();
 
-  // mensagens de erro por campo
   String? _erroNome;
   String? _erroCargaHoraria;
   String? _erroDescricao;
@@ -28,11 +27,10 @@ class _FormularioDisciplinaState extends State<FormularioDisciplina> {
   @override
   void initState() {
     super.initState();
-    // preenche os campos se estiver a editar
     if (widget.disciplina != null) {
-      _nomeController.text         = widget.disciplina!.nome;
+      _nomeController.text = widget.disciplina!.nome;
       _cargaHorariaController.text = widget.disciplina!.cargaHoraria.toString();
-      _descricaoController.text    = widget.disciplina!.descricao;
+      _descricaoController.text = widget.disciplina!.descricao;
     }
   }
 
@@ -44,26 +42,33 @@ class _FormularioDisciplinaState extends State<FormularioDisciplina> {
     super.dispose();
   }
 
-  // valida os campos e guarda a disciplina
   void _guardar() {
-    String nome      = _nomeController.text.trim();
-    String cargaStr  = _cargaHorariaController.text.trim();
+    String nome = _nomeController.text.trim();
+    String cargaStr = _cargaHorariaController.text.trim();
     String descricao = _descricaoController.text.trim();
-    int?   carga     = int.tryParse(cargaStr);
+    int? carga = int.tryParse(cargaStr);
 
+    // verifica os campos
     setState(() {
-      _erroNome        = nome.isEmpty      ? 'O nome não pode estar vazio'            : null;
-      _erroCargaHoraria = cargaStr.isEmpty ? 'A carga horária não pode estar vazia'  :
-                          (carga == null || carga <= 0) ? 'Insira um número válido maior que 0' : null;
-      _erroDescricao   = descricao.isEmpty ? 'A descrição não pode estar vazia'       : null;
+      _erroNome = nome.isEmpty ? 'O nome não pode estar vazio' : null;
+      _erroCargaHoraria = cargaStr.isEmpty
+          ? 'A carga horária não pode estar vazia'
+          : (carga == null || carga <= 0)
+              ? 'Insira um número válido maior que 0'
+              : null;
+      _erroDescricao = descricao.isEmpty ? 'A descrição não pode estar vazia' : null;
     });
 
-    if (nome.isEmpty || descricao.isEmpty || carga == null || carga <= 0) return;
+    if (nome.isEmpty || descricao.isEmpty || carga == null || carga <= 0) {
+      return;
+    }
+
+    print("a guardar disciplina...");
 
     if (widget.disciplina != null) {
-      widget.disciplina!.nome         = nome;
+      widget.disciplina!.nome = nome;
       widget.disciplina!.cargaHoraria = carga;
-      widget.disciplina!.descricao    = descricao;
+      widget.disciplina!.descricao = descricao;
       widget.onGuardar(widget.disciplina!);
     } else {
       widget.onGuardar(Disciplina(nome, carga, descricao));

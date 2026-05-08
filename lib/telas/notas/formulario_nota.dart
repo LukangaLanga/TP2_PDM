@@ -5,11 +5,11 @@ import '../../modelos/avaliacao.dart';
 import '../../modelos/estudante.dart';
 
 class FormularioNota extends StatefulWidget {
-  final Nota?           nota;
+  final Nota? nota;
   final List<Inscricao> inscricoes;
   final List<Avaliacao> avaliacoes;
   final List<Estudante> estudantes;
-  final Function(Nota)  onGuardar;
+  final Function(Nota) onGuardar;
 
   const FormularioNota({
     super.key,
@@ -34,9 +34,10 @@ class _FormularioNotaState extends State<FormularioNota> {
     super.initState();
     if (widget.nota != null) {
       _valorController.text = widget.nota!.valor.toStringAsFixed(1);
-      // pré-seleciona a avaliação para saber o peso máximo
       final matches = widget.avaliacoes.where((a) => a.id == widget.nota!.avaliacaoId);
-      if (matches.isNotEmpty) _avaliacaoSelecionada = matches.first;
+      if (matches.isNotEmpty) {
+        _avaliacaoSelecionada = matches.first;
+      }
     }
   }
 
@@ -46,13 +47,14 @@ class _FormularioNotaState extends State<FormularioNota> {
     super.dispose();
   }
 
-  // devolve o nome do estudante a partir da inscrição
   String _nomeEstudante(Inscricao i) {
     final matches = widget.estudantes.where((e) => e.id == i.estudanteId);
-    return matches.isEmpty ? 'Desconhecido' : matches.first.nome;
+    if (matches.isEmpty) {
+      return 'Desconhecido';
+    }
+    return matches.first.nome;
   }
 
-  // mostra uma mensagem de erro com AlertDialog simples
   void _mostrarErro(String mensagem) {
     showDialog(
       context: context,
@@ -69,11 +71,9 @@ class _FormularioNotaState extends State<FormularioNota> {
     );
   }
 
-  // valida e guarda a nota
   void _guardar() {
     bool editando = widget.nota != null;
 
-    // valida os dropdowns quando estiver a criar uma nova nota
     if (!editando) {
       if (_inscricaoSelecionada == null) {
         _mostrarErro('Selecione um estudante');
@@ -85,7 +85,6 @@ class _FormularioNotaState extends State<FormularioNota> {
       }
     }
 
-    // validação do valor da nota
     String texto = _valorController.text.trim();
     if (texto.isEmpty) {
       _mostrarErro('O campo não pode estar vazio');
@@ -105,6 +104,8 @@ class _FormularioNotaState extends State<FormularioNota> {
       _mostrarErro('A nota não pode ser superior ao peso (${peso.toStringAsFixed(1)})');
       return;
     }
+
+    print("a guardar nota $valor...");
 
     if (editando) {
       widget.nota!.valor = valor;
@@ -143,7 +144,7 @@ class _FormularioNotaState extends State<FormularioNota> {
             ),
           ),
           const SizedBox(height: 16),
-          // dropdowns só aparecem quando criar uma nova nota
+          // dropdowns só quando criar
           if (!editando) ...[
             DropdownButtonFormField<Inscricao>(
               value: _inscricaoSelecionada,
@@ -157,7 +158,9 @@ class _FormularioNotaState extends State<FormularioNota> {
                   child: Text(_nomeEstudante(i)),
                 );
               }).toList(),
-              onChanged: (i) => setState(() => _inscricaoSelecionada = i),
+              onChanged: (i) => setState(() {
+                _inscricaoSelecionada = i;
+              }),
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<Avaliacao>(
@@ -172,11 +175,12 @@ class _FormularioNotaState extends State<FormularioNota> {
                   child: Text('${a.nome} (peso: ${a.peso.toStringAsFixed(1)})'),
                 );
               }).toList(),
-              onChanged: (a) => setState(() => _avaliacaoSelecionada = a),
+              onChanged: (a) => setState(() {
+                _avaliacaoSelecionada = a;
+              }),
             ),
             const SizedBox(height: 12),
           ],
-          // mostra o peso máximo quando a avaliação está seleccionada
           if (_avaliacaoSelecionada != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),

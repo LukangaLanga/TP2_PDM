@@ -26,7 +26,6 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
     super.dispose();
   }
 
-  // mostra uma mensagem de erro com AlertDialog simples
   void _mostrarErro(String mensagem) {
     showDialog(
       context: context,
@@ -43,7 +42,6 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
     );
   }
 
-  // valida e guarda a avaliação
   void _guardar() {
     String nome = _nomeController.text.trim();
     if (nome.isEmpty) {
@@ -57,6 +55,7 @@ class _FormularioAvaliacaoState extends State<FormularioAvaliacao> {
       return;
     }
 
+    print("a guardar avaliacao...");
     widget.onGuardar(Avaliacao(widget.disciplinaId, nome, peso));
   }
 

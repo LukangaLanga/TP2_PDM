@@ -18,6 +18,7 @@ class ListaEstudantes extends StatelessWidget {
     if (estudantes.isEmpty) {
       return const Center(child: Text('Nenhum estudante encontrado'));
     }
+
     return ListView.builder(
       itemCount: estudantes.length,
       itemBuilder: (context, index) {

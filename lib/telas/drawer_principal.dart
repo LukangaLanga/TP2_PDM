@@ -13,7 +13,7 @@ class DrawerPrincipal extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          // cabeçalho azul escuro com nome da app
+          // cabeçalho
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue[900]),
             child: const SizedBox(
@@ -35,11 +35,32 @@ class DrawerPrincipal extends StatelessWidget {
               ),
             ),
           ),
-          _ItemDrawer(icone: Icons.home,       titulo: 'Início',      destino: const TelaInicial()),
-          _ItemDrawer(icone: Icons.people,     titulo: 'Estudantes',  destino: const EstudantesTela()),
-          _ItemDrawer(icone: Icons.book,       titulo: 'Disciplinas', destino: const DisciplinasTela()),
-          _ItemDrawer(icone: Icons.assignment, titulo: 'Avaliações',  destino: const AvaliacoesTela()),
-          _ItemDrawer(icone: Icons.grade,      titulo: 'Notas',       destino: const NotasTela()),
+          // itens do menu
+          _ItemDrawer(
+            icone: Icons.home,
+            titulo: 'Início',
+            destino: const TelaInicial(),
+          ),
+          _ItemDrawer(
+            icone: Icons.people,
+            titulo: 'Estudantes',
+            destino: const EstudantesTela(),
+          ),
+          _ItemDrawer(
+            icone: Icons.book,
+            titulo: 'Disciplinas',
+            destino: const DisciplinasTela(),
+          ),
+          _ItemDrawer(
+            icone: Icons.assignment,
+            titulo: 'Avaliações',
+            destino: const AvaliacoesTela(),
+          ),
+          _ItemDrawer(
+            icone: Icons.grade,
+            titulo: 'Notas',
+            destino: const NotasTela(),
+          ),
         ],
       ),
     );

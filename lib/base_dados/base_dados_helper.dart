@@ -7,19 +7,23 @@ class BaseDadosHelper {
   static Database? _db;
 
   static Future<Database> getInstance() async {
+    // se já existe, devolve
     if (_db != null) {
       return _db!;
     }
 
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        sqfliteFfiInit();
-        databaseFactory = databaseFactoryFfi;
-      }
+    print("a abrir base de dados...");
 
-      _db = await openDatabase(
-        join(await getDatabasesPath(), 'gestao_notas.db'),
-        onCreate: (db, version) async {
-          await db.execute('''
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
+    _db = await openDatabase(
+      join(await getDatabasesPath(), 'gestao_notas.db'),
+      onCreate: (db, version) async {
+        print("a criar tabelas...");
+        await db.execute('''
           CREATE TABLE estudantes (
             id              INTEGER PRIMARY KEY AUTOINCREMENT,
             numeroEstudante TEXT,
@@ -28,7 +32,7 @@ class BaseDadosHelper {
             curso           TEXT
           )
         ''');
-          await db.execute('''
+        await db.execute('''
           CREATE TABLE disciplinas (
             id           INTEGER PRIMARY KEY AUTOINCREMENT,
             codigo       TEXT,
@@ -37,7 +41,7 @@ class BaseDadosHelper {
             descricao    TEXT
           )
         ''');
-          await db.execute('''
+        await db.execute('''
           CREATE TABLE avaliacoes (
             id           INTEGER PRIMARY KEY AUTOINCREMENT,
             disciplinaId INTEGER,
@@ -46,7 +50,7 @@ class BaseDadosHelper {
             FOREIGN KEY (disciplinaId) REFERENCES disciplinas(id)
           )
         ''');
-          await db.execute('''
+        await db.execute('''
           CREATE TABLE inscricoes (
             id            INTEGER PRIMARY KEY AUTOINCREMENT,
             estudanteId   INTEGER,
@@ -56,7 +60,7 @@ class BaseDadosHelper {
             FOREIGN KEY (disciplinaId) REFERENCES disciplinas(id)
           )
         ''');
-          await db.execute('''
+        await db.execute('''
           CREATE TABLE notas (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
             inscricaoId INTEGER,
@@ -67,10 +71,10 @@ class BaseDadosHelper {
             FOREIGN KEY (avaliacaoId) REFERENCES avaliacoes(id)
           )
         ''');
-        },
-        version: 1,
-      );
-      return _db!;
-    }
+        print("tabelas criadas");
+      },
+      version: 1,
+    );
+    return _db!;
   }
-
+}

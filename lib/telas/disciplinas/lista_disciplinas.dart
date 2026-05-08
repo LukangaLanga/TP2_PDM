@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../modelos/disciplina.dart';
 
 class ListaDisciplinas extends StatelessWidget {
-  final List<Disciplina>  disciplinas;
-  // média por id da disciplina — null significa "sem notas"
+  final List<Disciplina> disciplinas;
   final Map<int, double?> medias;
   final Function(Disciplina) onEditar;
   final Function(int) onRemover;
@@ -21,13 +20,13 @@ class ListaDisciplinas extends StatelessWidget {
     if (disciplinas.isEmpty) {
       return const Center(child: Text('Nenhuma disciplina encontrada'));
     }
+
     return ListView.builder(
       itemCount: disciplinas.length,
       itemBuilder: (context, index) {
-        Disciplina d    = disciplinas[index];
-        double?    media = medias[d.id];
+        Disciplina d = disciplinas[index];
+        double? media = medias[d.id];
 
-        // widget que mostra a média com a cor correcta
         Widget mediaWidget;
         if (media == null) {
           mediaWidget = const Text(
@@ -35,7 +34,7 @@ class ListaDisciplinas extends StatelessWidget {
             style: TextStyle(color: Colors.grey, fontSize: 12),
           );
         } else {
-          // verde se >= 10, vermelho se < 10
+          // verde >= 10, vermelho < 10
           Color cor = media >= 10 ? Colors.green : Colors.red;
           mediaWidget = Text(
             'Média: ${media.toStringAsFixed(1)}',
@@ -59,12 +58,10 @@ class ListaDisciplinas extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // botão editar
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.blue[900]),
                   onPressed: () => onEditar(d),
                 ),
-                // botão remover
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => onRemover(d.id!),

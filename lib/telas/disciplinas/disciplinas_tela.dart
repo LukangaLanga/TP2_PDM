@@ -14,9 +14,8 @@ class DisciplinasTela extends StatefulWidget {
 }
 
 class _DisciplinasTelaState extends State<DisciplinasTela> {
-  List<Disciplina>  _disciplinas = [];
-  // médias por id da disciplina — null se não houver notas
-  Map<int, double?> _medias      = {};
+  List<Disciplina> _disciplinas = [];
+  Map<int, double?> _medias = {};
 
   @override
   void initState() {
@@ -24,8 +23,9 @@ class _DisciplinasTelaState extends State<DisciplinasTela> {
     _carregar();
   }
 
-  // carrega disciplinas e calcula a média de notas de cada uma
+  // carrega disciplinas e calcula médias
   Future<void> _carregar() async {
+    print("a carregar disciplinas...");
     List<Disciplina> lista = await Locator.disciplina.listarTodos();
     Map<int, double?> medias = {};
 
@@ -41,7 +41,7 @@ class _DisciplinasTelaState extends State<DisciplinasTela> {
 
     setState(() {
       _disciplinas = lista;
-      _medias      = medias;
+      _medias = medias;
     });
   }
 
@@ -55,7 +55,6 @@ class _DisciplinasTelaState extends State<DisciplinasTela> {
     await _carregar();
   }
 
-  // pede confirmação antes de remover a disciplina
   Future<void> _remover(int id) async {
     bool confirmar = await showDialog<bool>(
           context: context,
@@ -82,6 +81,7 @@ class _DisciplinasTelaState extends State<DisciplinasTela> {
     }
   }
 
+  // abre o form
   void _abrirFormulario({Disciplina? disciplina}) {
     showModalBottomSheet(
       context: context,
@@ -111,9 +111,9 @@ class _DisciplinasTelaState extends State<DisciplinasTela> {
       drawer: const DrawerPrincipal(),
       body: ListaDisciplinas(
         disciplinas: _disciplinas,
-        medias:      _medias,
-        onEditar:    (d) => _abrirFormulario(disciplina: d),
-        onRemover:   _remover,
+        medias: _medias,
+        onEditar: (d) => _abrirFormulario(disciplina: d),
+        onRemover: _remover,
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[900],

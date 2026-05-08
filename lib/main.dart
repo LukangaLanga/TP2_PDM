@@ -4,6 +4,7 @@ import 'telas/tela_inicial.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  print("a iniciar a base de dados...");
   await BaseDadosHelper.getInstance();
   runApp(const GestaoNotasApp());
 }

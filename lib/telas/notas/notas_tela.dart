@@ -17,14 +17,13 @@ class NotasTela extends StatefulWidget {
 }
 
 class _NotasTelaState extends State<NotasTela> {
-  List<Disciplina> _disciplinas           = [];
-  List<Nota>       _notas                 = [];
-  List<Inscricao>  _inscricoes            = [];
-  List<Avaliacao>  _avaliacoes            = [];
-  List<Estudante>  _estudantes            = [];
-  Disciplina?      _disciplinaSelecionada;
-  // média da disciplina seleccionada — null se não houver notas
-  double?          _media;
+  List<Disciplina> _disciplinas = [];
+  List<Nota> _notas = [];
+  List<Inscricao> _inscricoes = [];
+  List<Avaliacao> _avaliacoes = [];
+  List<Estudante> _estudantes = [];
+  Disciplina? _disciplinaSelecionada;
+  double? _media;
 
   @override
   void initState() {
@@ -33,26 +32,31 @@ class _NotasTelaState extends State<NotasTela> {
   }
 
   Future<void> _carregarInicial() async {
+    print("a carregar dados iniciais...");
     List<Disciplina> disciplinas = await Locator.disciplina.listarTodos();
-    List<Estudante>  estudantes  = await Locator.estudante.listarTodos();
+    List<Estudante> estudantes = await Locator.estudante.listarTodos();
     setState(() {
       _disciplinas = disciplinas;
-      _estudantes  = estudantes;
-      if (disciplinas.isNotEmpty) _disciplinaSelecionada = disciplinas.first;
+      _estudantes = estudantes;
+      if (disciplinas.isNotEmpty) {
+        _disciplinaSelecionada = disciplinas.first;
+      }
     });
     await _carregarPorDisciplina();
   }
 
-  // carrega notas, inscrições e avaliações da disciplina seleccionada
+  // carrega notas, inscrições e avaliações da disciplina
   Future<void> _carregarPorDisciplina() async {
-    if (_disciplinaSelecionada == null) return;
+    if (_disciplinaSelecionada == null) {
+      return;
+    }
     int disciplinaId = _disciplinaSelecionada!.id!;
+    print("a carregar notas da disciplina $disciplinaId...");
 
-    List<Nota>      notas      = await Locator.nota.listarPorDisciplina(disciplinaId);
+    List<Nota> notas = await Locator.nota.listarPorDisciplina(disciplinaId);
     List<Inscricao> inscricoes = await Locator.inscricao.listarPorDisciplina(disciplinaId);
     List<Avaliacao> avaliacoes = await Locator.avaliacao.listarPorDisciplina(disciplinaId);
 
-    // calcula a média — null se não houver notas
     double? media;
     if (notas.isNotEmpty) {
       double soma = notas.fold(0.0, (sum, n) => sum + n.valor);
@@ -60,10 +64,10 @@ class _NotasTelaState extends State<NotasTela> {
     }
 
     setState(() {
-      _notas      = notas;
+      _notas = notas;
       _inscricoes = inscricoes;
       _avaliacoes = avaliacoes;
-      _media      = media;
+      _media = media;
     });
   }
 
@@ -77,12 +81,13 @@ class _NotasTelaState extends State<NotasTela> {
     await _carregarPorDisciplina();
   }
 
+  // abre o form
   void _abrirFormulario({Nota? nota}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (_) => FormularioNota(
-        nota:       nota,
+        nota: nota,
         inscricoes: _inscricoes,
         avaliacoes: _avaliacoes,
         estudantes: _estudantes,
@@ -122,12 +127,14 @@ class _NotasTelaState extends State<NotasTela> {
                 return DropdownMenuItem(value: d, child: Text(d.nome));
               }).toList(),
               onChanged: (d) {
-                setState(() => _disciplinaSelecionada = d);
+                setState(() {
+                  _disciplinaSelecionada = d;
+                });
                 _carregarPorDisciplina();
               },
             ),
           ),
-          // média geral no topo — verde se >= 10, vermelho se < 10
+          // média geral — verde se >= 10, vermelho se < 10
           if (_media != null)
             Container(
               color: _media! >= 10 ? Colors.green : Colors.red,
@@ -142,14 +149,13 @@ class _NotasTelaState extends State<NotasTela> {
                 ),
               ),
             ),
-          // lista de notas com contexto de estudante e avaliação
           Expanded(
             child: ListaNotas(
-              notas:      _notas,
+              notas: _notas,
               inscricoes: _inscricoes,
               avaliacoes: _avaliacoes,
               estudantes: _estudantes,
-              onEditar:   (n) => _abrirFormulario(nota: n),
+              onEditar: (n) => _abrirFormulario(nota: n),
             ),
           ),
         ],

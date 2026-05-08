@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../modelos/avaliacao.dart';
 
-// AvaliacaoRepositorio não tem editar — só remover
 class ListaAvaliacoes extends StatelessWidget {
   final List<Avaliacao> avaliacoes;
   final Function(int) onRemover;
@@ -17,6 +16,7 @@ class ListaAvaliacoes extends StatelessWidget {
     if (avaliacoes.isEmpty) {
       return const Center(child: Text('Nenhuma avaliação encontrada'));
     }
+
     return ListView.builder(
       itemCount: avaliacoes.length,
       itemBuilder: (context, index) {

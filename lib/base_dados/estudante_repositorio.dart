@@ -5,11 +5,13 @@ import 'base_dados_helper.dart';
 class EstudanteRepositorio {
 
   Future<void> adicionar(Estudante e) async {
+    print("a adicionar: ${e.nome}");
     Database db = await BaseDadosHelper.getInstance();
     await db.insert('estudantes', e.toMap());
   }
 
   Future<void> editar(Estudante e) async {
+    print("a editar id: ${e.id}");
     Database db = await BaseDadosHelper.getInstance();
     await db.update(
       'estudantes',
@@ -20,15 +22,18 @@ class EstudanteRepositorio {
   }
 
   Future<void> remover(int id) async {
+    print("a remover id: $id");
     Database db = await BaseDadosHelper.getInstance();
     await db.delete(
       'estudantes',
       where: 'id = ?',
       whereArgs: [id],
     );
+    print("removido");
   }
 
   Future<List<Estudante>> listarTodos() async {
+    print("a carregar estudantes...");
     Database db = await BaseDadosHelper.getInstance();
     List<Map<String, dynamic>> resultado = await db.query('estudantes');
 
@@ -36,6 +41,7 @@ class EstudanteRepositorio {
     for (Map<String, dynamic> map in resultado) {
       estudantes.add(Estudante.fromMap(map));
     }
+    print("total: ${estudantes.length}");
     return estudantes;
   }
 
@@ -47,7 +53,9 @@ class EstudanteRepositorio {
       whereArgs: [id],
     );
 
-    if (resultado.isEmpty) return null;
+    if (resultado.isEmpty) {
+      return null;
+    }
     return Estudante.fromMap(resultado[0]);
   }
 }

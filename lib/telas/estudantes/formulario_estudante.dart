@@ -16,11 +16,10 @@ class FormularioEstudante extends StatefulWidget {
 }
 
 class _FormularioEstudanteState extends State<FormularioEstudante> {
-  final TextEditingController _nomeController  = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _cursoController = TextEditingController();
 
-  // mensagens de erro por campo
   String? _erroNome;
   String? _erroEmail;
   String? _erroCurso;
@@ -28,9 +27,8 @@ class _FormularioEstudanteState extends State<FormularioEstudante> {
   @override
   void initState() {
     super.initState();
-    // preenche os campos se estiver a editar
     if (widget.estudante != null) {
-      _nomeController.text  = widget.estudante!.nome;
+      _nomeController.text = widget.estudante!.nome;
       _emailController.text = widget.estudante!.email;
       _cursoController.text = widget.estudante!.curso;
     }
@@ -44,22 +42,26 @@ class _FormularioEstudanteState extends State<FormularioEstudante> {
     super.dispose();
   }
 
-  // valida os campos e guarda o estudante
   void _guardar() {
-    String nome  = _nomeController.text.trim();
+    String nome = _nomeController.text.trim();
     String email = _emailController.text.trim();
     String curso = _cursoController.text.trim();
 
+    // verifica se está vazio
     setState(() {
-      _erroNome  = nome.isEmpty  ? 'O nome não pode estar vazio'  : null;
+      _erroNome = nome.isEmpty ? 'O nome não pode estar vazio' : null;
       _erroEmail = email.isEmpty ? 'O email não pode estar vazio' : null;
       _erroCurso = curso.isEmpty ? 'O curso não pode estar vazio' : null;
     });
 
-    if (nome.isEmpty || email.isEmpty || curso.isEmpty) return;
+    if (nome.isEmpty || email.isEmpty || curso.isEmpty) {
+      return;
+    }
+
+    print("a guardar estudante...");
 
     if (widget.estudante != null) {
-      widget.estudante!.nome  = nome;
+      widget.estudante!.nome = nome;
       widget.estudante!.email = email;
       widget.estudante!.curso = curso;
       widget.onGuardar(widget.estudante!);

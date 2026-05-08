@@ -13,7 +13,7 @@ class EstudantesTela extends StatefulWidget {
 }
 
 class _EstudantesTelaState extends State<EstudantesTela> {
-  // lista de estudantes carregada da BD
+  // lista de estudantes
   List<Estudante> _estudantes = [];
 
   @override
@@ -22,10 +22,12 @@ class _EstudantesTelaState extends State<EstudantesTela> {
     _carregar();
   }
 
-  // carrega os estudantes da base de dados
   Future<void> _carregar() async {
+    print("a carregar estudantes...");
     List<Estudante> lista = await Locator.estudante.listarTodos();
-    setState(() => _estudantes = lista);
+    setState(() {
+      _estudantes = lista;
+    });
   }
 
   Future<void> _adicionar(Estudante e) async {
@@ -38,7 +40,7 @@ class _EstudantesTelaState extends State<EstudantesTela> {
     await _carregar();
   }
 
-  // pede confirmação antes de remover o estudante
+  // pede confirmação e remove
   Future<void> _remover(int id) async {
     bool confirmar = await showDialog<bool>(
           context: context,
@@ -65,7 +67,7 @@ class _EstudantesTelaState extends State<EstudantesTela> {
     }
   }
 
-  // abre o formulário em baixo do ecrã
+  // abre o form
   void _abrirFormulario({Estudante? estudante}) {
     showModalBottomSheet(
       context: context,
@@ -95,10 +97,9 @@ class _EstudantesTelaState extends State<EstudantesTela> {
       drawer: const DrawerPrincipal(),
       body: ListaEstudantes(
         estudantes: _estudantes,
-        onEditar:   (e) => _abrirFormulario(estudante: e),
-        onRemover:  _remover,
+        onEditar: (e) => _abrirFormulario(estudante: e),
+        onRemover: _remover,
       ),
-      // botão para adicionar novo estudante
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[900],
         onPressed: () => _abrirFormulario(),

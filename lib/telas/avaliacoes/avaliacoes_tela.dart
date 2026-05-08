@@ -14,9 +14,9 @@ class AvaliacoesTela extends StatefulWidget {
 }
 
 class _AvaliacoesTelaState extends State<AvaliacoesTela> {
-  List<Disciplina> _disciplinas    = [];
-  List<Avaliacao>  _avaliacoes     = [];
-  Disciplina?      _disciplinaSelecionada;
+  List<Disciplina> _disciplinas = [];
+  List<Avaliacao> _avaliacoes = [];
+  Disciplina? _disciplinaSelecionada;
 
   @override
   void initState() {
@@ -25,19 +25,26 @@ class _AvaliacoesTelaState extends State<AvaliacoesTela> {
   }
 
   Future<void> _carregarDisciplinas() async {
+    print("a carregar disciplinas...");
     List<Disciplina> lista = await Locator.disciplina.listarTodos();
     setState(() {
       _disciplinas = lista;
-      if (lista.isNotEmpty) _disciplinaSelecionada = lista.first;
+      if (lista.isNotEmpty) {
+        _disciplinaSelecionada = lista.first;
+      }
     });
     await _carregarAvaliacoes();
   }
 
   Future<void> _carregarAvaliacoes() async {
-    if (_disciplinaSelecionada == null) return;
-    List<Avaliacao> lista = await Locator.avaliacao
-        .listarPorDisciplina(_disciplinaSelecionada!.id!);
-    setState(() => _avaliacoes = lista);
+    if (_disciplinaSelecionada == null) {
+      return;
+    }
+    print("a carregar avaliacoes...");
+    List<Avaliacao> lista = await Locator.avaliacao.listarPorDisciplina(_disciplinaSelecionada!.id!);
+    setState(() {
+      _avaliacoes = lista;
+    });
   }
 
   Future<void> _adicionar(Avaliacao a) async {
@@ -50,8 +57,11 @@ class _AvaliacoesTelaState extends State<AvaliacoesTela> {
     await _carregarAvaliacoes();
   }
 
+  // abre o form
   void _abrirFormulario() {
-    if (_disciplinaSelecionada == null) return;
+    if (_disciplinaSelecionada == null) {
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -88,7 +98,9 @@ class _AvaliacoesTelaState extends State<AvaliacoesTela> {
                 return DropdownMenuItem(value: d, child: Text(d.nome));
               }).toList(),
               onChanged: (d) {
-                setState(() => _disciplinaSelecionada = d);
+                setState(() {
+                  _disciplinaSelecionada = d;
+                });
                 _carregarAvaliacoes();
               },
             ),

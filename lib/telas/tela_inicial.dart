@@ -10,10 +10,10 @@ class TelaInicial extends StatefulWidget {
 }
 
 class _TelaInicialState extends State<TelaInicial> {
-  int _totalEstudantes  = 0;
+  int _totalEstudantes = 0;
   int _totalDisciplinas = 0;
-  int _totalAvaliacoes  = 0;
-  int _totalInscricoes  = 0;
+  int _totalAvaliacoes = 0;
+  int _totalInscricoes = 0;
 
   @override
   void initState() {
@@ -21,25 +21,25 @@ class _TelaInicialState extends State<TelaInicial> {
     _carregar();
   }
 
-  // carrega os totais da base de dados
   Future<void> _carregar() async {
-    final estudantes  = await Locator.estudante.listarTodos();
+    print("a carregar resumo...");
+    final estudantes = await Locator.estudante.listarTodos();
     final disciplinas = await Locator.disciplina.listarTodos();
 
     int totalAvaliacoes = 0;
     int totalInscricoes = 0;
     for (var d in disciplinas) {
-      final avs  = await Locator.avaliacao.listarPorDisciplina(d.id!);
+      final avs = await Locator.avaliacao.listarPorDisciplina(d.id!);
       final insc = await Locator.inscricao.listarPorDisciplina(d.id!);
       totalAvaliacoes += avs.length;
       totalInscricoes += insc.length;
     }
 
     setState(() {
-      _totalEstudantes  = estudantes.length;
+      _totalEstudantes = estudantes.length;
       _totalDisciplinas = disciplinas.length;
-      _totalAvaliacoes  = totalAvaliacoes;
-      _totalInscricoes  = totalInscricoes;
+      _totalAvaliacoes = totalAvaliacoes;
+      _totalInscricoes = totalInscricoes;
     });
   }
 
@@ -68,21 +68,19 @@ class _TelaInicialState extends State<TelaInicial> {
             const SizedBox(height: 4),
             const Text('Resumo geral', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 24),
-            // primeira linha: estudantes e disciplinas
             Row(
               children: [
-                _CardResumo(titulo: 'Estudantes',  valor: _totalEstudantes,  icone: Icons.people),
+                _CardResumo(titulo: 'Estudantes', valor: _totalEstudantes, icone: Icons.people),
                 const SizedBox(width: 16),
                 _CardResumo(titulo: 'Disciplinas', valor: _totalDisciplinas, icone: Icons.book),
               ],
             ),
             const SizedBox(height: 16),
-            // segunda linha: avaliações e inscrições
             Row(
               children: [
-                _CardResumo(titulo: 'Avaliações',  valor: _totalAvaliacoes, icone: Icons.assignment),
+                _CardResumo(titulo: 'Avaliações', valor: _totalAvaliacoes, icone: Icons.assignment),
                 const SizedBox(width: 16),
-                _CardResumo(titulo: 'Inscrições',  valor: _totalInscricoes, icone: Icons.how_to_reg),
+                _CardResumo(titulo: 'Inscrições', valor: _totalInscricoes, icone: Icons.how_to_reg),
               ],
             ),
           ],
